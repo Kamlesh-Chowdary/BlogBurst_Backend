@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev" : "nodemon src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/Kamlesh-Chowdary/BlogBurst_Backend/issues"
   },
-  "homepage": "https://github.com/Kamlesh-Chowdary/BlogBurst_Backend#readme"
+  "homepage": "https://github.com/Kamlesh-Chowdary/BlogBurst_Backend#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
 }
