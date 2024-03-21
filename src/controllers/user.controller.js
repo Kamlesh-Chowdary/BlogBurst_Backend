@@ -3,10 +3,12 @@ import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { User } from "../models/user.model.js";
 
-const generateAccessAndRefreshToken = async (user) => {
+const generateAccessAndRefreshToken = async (userId) => {
   try {
-    const accessToken = user.generateAccessToken();
-    const refreshToken = user.generateRefreshToken();
+    const user = await User.findById(userId);
+
+    const accessToken = await user.generateAccessToken();
+    const refreshToken = await user.generateRefreshToken();
 
     user.refreshToken = refreshToken;
     await user.save({ validateBeforeSave: false });
@@ -15,7 +17,8 @@ const generateAccessAndRefreshToken = async (user) => {
   } catch (error) {
     throw new ApiError(
       500,
-      "Something went wrong while generating access and refresh token"
+      error.message ||
+        "Something went wrong while generating access and refresh token"
     );
   }
 };
@@ -81,21 +84,21 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "email is required");
   }
 
-  const user = await User.findOne(email);
+  const user = await User.findOne({ email });
 
   if (!user) {
     throw new ApiError(404, "User doesn't exist");
   }
 
-  const isPasswordValid = user.isPasswordCorrect(password);
+  const isPasswordValid = await user.isPasswordCorrect(password);
 
   if (!isPasswordValid) {
     throw new ApiError(401, "Invalid user credentials");
   }
 
-  const { accessToken, refreshToken } =
-    await generateAccessAndRefreshToken(user);
-
+  const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
+    user._id
+  );
   const loggedInUser = await User.findById(user._id).select(
     "-password -refreshToken"
   );
@@ -122,7 +125,7 @@ const loginUser = asyncHandler(async (req, res) => {
     );
 });
 
-const logout = asyncHandler(async (req, res) => {
+const logoutUser = asyncHandler(async (req, res) => {
   //req.user -> current user data
   //find the user and update  the refreshToken to undefined
   //Clear the cokkies
@@ -130,9 +133,7 @@ const logout = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
     req.user._id,
     {
-      $unset: {
-        refreshToken: "",
-      },
+      $unset: { refreshToken: 1 },
     },
     {
       new: true,
@@ -151,4 +152,4 @@ const logout = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, {}, "User Logged out successfully"));
 });
 
-export { registerUser, loginUser, logout };
+export { registerUser, loginUser, logoutUser };
