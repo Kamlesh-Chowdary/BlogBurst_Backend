@@ -152,6 +152,18 @@ const logoutUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, {}, "User Logged out successfully"));
 });
 
+const getCurrentUser = asyncHandler(async (req, res) => {
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        201,
+        req.user,
+        "Current user details fetched successfully"
+      )
+    );
+});
+
 const getUsersPosts = asyncHandler(async (req, res) => {
   //get the user from req.user
   //find in database
@@ -197,4 +209,4 @@ const getUsersPosts = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, user[0], "Users Posts fetched Succesfully"));
 });
 
-export { registerUser, loginUser, logoutUser, getUsersPosts };
+export { registerUser, loginUser, logoutUser, getUsersPosts, getCurrentUser };
