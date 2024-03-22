@@ -35,12 +35,6 @@ const userSchema = new mongoose.Schema(
     refreshToken: {
       type: String,
     },
-    userPosts: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Post",
-      },
-    ],
   },
   {
     timestamps: true,

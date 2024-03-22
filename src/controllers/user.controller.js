@@ -152,4 +152,49 @@ const logoutUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, {}, "User Logged out successfully"));
 });
 
-export { registerUser, loginUser, logoutUser };
+const getUsersPosts = asyncHandler(async (req, res) => {
+  //get the user from req.user
+  //find in database
+  //add aggregate pipeline from user model to post model
+  //return all posts created by the user
+
+  const user = await User.aggregate([
+    {
+      $match: {
+        _id: req.user?._id,
+      },
+    },
+    {
+      $lookup: {
+        from: "posts",
+        localField: "_id",
+        foreignField: "owner",
+        as: "userPosts",
+        pipeline: [
+          {
+            $project: {
+              title: 1,
+              slug: 1,
+              content: 1,
+              featuredImage: 1,
+              status: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $project: {
+        password: 0,
+        refreshToken: 0,
+        __v: 0,
+      },
+    },
+  ]);
+
+  res
+    .status(201)
+    .json(new ApiResponse(201, user[0], "Users Posts fetched Succesfully"));
+});
+
+export { registerUser, loginUser, logoutUser, getUsersPosts };

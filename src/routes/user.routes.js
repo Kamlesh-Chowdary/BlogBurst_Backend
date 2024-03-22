@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  getUsersPosts,
   loginUser,
   logoutUser,
   registerUser,
@@ -13,5 +14,6 @@ userRouter.route("/login").post(loginUser);
 
 //secured routes
 userRouter.route("/logout").post(verifyUser, logoutUser);
+userRouter.route("/user-posts").get(verifyUser, getUsersPosts);
 
 export { userRouter };
