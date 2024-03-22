@@ -52,4 +52,17 @@ const createPost = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, createdPost, "Post uploaded Successfully"));
 });
 
-export { createPost };
+const getPostById = asyncHandler(async (req, res) => {
+  const post_id = req.params.id;
+  if (!post_id) {
+    throw new ApiError(400, "Post Id is required");
+  }
+
+  const post = await Post.findById(post_id);
+  if (!post) {
+    throw new ApiError(401, "Invalid Post Id");
+  }
+  res.status(200).json(new ApiResponse(201, post, "Post fetched successfully"));
+});
+
+export { createPost, getPostById };
