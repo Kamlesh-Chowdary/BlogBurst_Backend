@@ -42,6 +42,7 @@ const createPost = asyncHandler(async (req, res) => {
     content,
     featuredImage: postUrl,
     status,
+    owner: req.user?._id,
   });
   const createdPost = await Post.findById(post._id).select("-__v");
   if (!createdPost) {
@@ -58,7 +59,7 @@ const getPostById = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Post Id is required");
   }
 
-  const post = await Post.findById(post_id);
+  const post = await Post.findById(post_id).populate("owner", "fullname");
   if (!post) {
     throw new ApiError(401, "Invalid Post Id");
   }
