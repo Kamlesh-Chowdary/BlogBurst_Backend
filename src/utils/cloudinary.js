@@ -21,11 +21,23 @@ const uploadOnCloudinary = async function (localFilePath) {
     fs.unlinkSync(localFilePath);
     return response;
   } catch (error) {
-    console.log(error);
     // remove the locally saved temporary file as the upload operation got failed
     fs.unlinkSync(localFilePath);
     return null;
   }
 };
 
-export { uploadOnCloudinary };
+const deleteFileOnCloudinary = async (secureUrl) => {
+  try {
+    if (!secureUrl) return null;
+    //Extracting public_id from the secure_url
+
+    const publicId = secureUrl.match(/\/([^/]+?)\.([^/]+?)$/)[1];
+    const result = await cloudinary.uploader.destroy(publicId);
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export { uploadOnCloudinary, deleteFileOnCloudinary };

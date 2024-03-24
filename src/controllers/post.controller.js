@@ -2,7 +2,10 @@ import { Post } from "../models/post.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import {
+  deleteFileOnCloudinary,
+  uploadOnCloudinary,
+} from "../utils/cloudinary.js";
 
 const createPost = asyncHandler(async (req, res) => {
   //get the data from the frontend.
@@ -128,10 +131,27 @@ const updatefeaturedImage = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, updatedPost, "Image updated successfully"));
 });
 
+const deleteFeaturedImage = asyncHandler(async (req, res) => {
+  const imageUrl = req.body?.featuredImage;
+  if (!imageUrl) {
+    throw new ApiError(400, "Image URL is required");
+  }
+  console.log(imageUrl);
+
+  const response = await deleteFileOnCloudinary(imageUrl);
+  if (!response) {
+    throw new ApiError(400, "Error deleting the file");
+  }
+  res
+    .status(200)
+    .json(new ApiResponse(200, response, "File deleted successfully"));
+});
+
 export {
   createPost,
   getPostById,
   getAllPosts,
   updatePost,
   updatefeaturedImage,
+  deleteFeaturedImage,
 };

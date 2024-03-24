@@ -2,6 +2,7 @@ import { upload } from "../middlewares/multer.middleware.js";
 import { Router } from "express";
 import {
   createPost,
+  deleteFeaturedImage,
   getAllPosts,
   getPostById,
   updatePost,
@@ -23,5 +24,5 @@ postRouter.route("/update-post/:slug_id").patch(updatePost);
 postRouter
   .route("/update-image/:slug_id")
   .patch(upload.single("featuredImage"), updatefeaturedImage);
-
+postRouter.route("/delete-image").delete(deleteFeaturedImage);
 export { postRouter };
