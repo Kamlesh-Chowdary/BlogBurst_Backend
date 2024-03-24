@@ -31,8 +31,8 @@ const createPost = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Post file is required");
   }
 
-  const postUrl = await uploadOnCloudinary(postLocalFilePath);
-  if (!postUrl) {
+  const imageResponse = await uploadOnCloudinary(postLocalFilePath);
+  if (!imageResponse) {
     throw new ApiError(400, "Post file is required");
   }
 
@@ -40,7 +40,7 @@ const createPost = asyncHandler(async (req, res) => {
     title,
     slug,
     content,
-    featuredImage: postUrl,
+    featuredImage: imageResponse.secure_url,
     status,
     owner: req.user?._id,
   });
@@ -74,4 +74,34 @@ const getPostById = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(201, post, "Post fetched successfully"));
 });
 
-export { createPost, getPostById, getAllPosts };
+const updatePost = asyncHandler(async (req, res) => {
+  const { slug_id } = req.params;
+
+  if (!slug_id) {
+    throw new ApiError(404, "Slug value is missing");
+  }
+  const { title, slug, content, status } = req.body;
+
+  if ([title, slug, status, content].some((field) => field?.trim() === "")) {
+    throw new ApiError(400, "All fields are required");
+  }
+
+  const updatedPost = await Post.findOneAndUpdate(
+    { slug: slug_id },
+    {
+      title,
+      slug,
+      content,
+      status,
+    },
+    {
+      new: true,
+    }
+  );
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, updatePost, "Post Updated Successfully"));
+});
+
+export { createPost, getPostById, getAllPosts, updatePost };

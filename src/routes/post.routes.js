@@ -4,6 +4,7 @@ import {
   createPost,
   getAllPosts,
   getPostById,
+  updatePost,
 } from "../controllers/post.controller.js";
 import { verifyUser } from "../middlewares/auth.middleware.js";
 const postRouter = Router();
@@ -17,4 +18,5 @@ postRouter
 
 postRouter.route("/get-posts").get(getAllPosts);
 postRouter.route("/:id").get(getPostById);
+postRouter.route("/update-post/:slug_id").patch(updatePost);
 export { postRouter };
