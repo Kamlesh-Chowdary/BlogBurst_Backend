@@ -58,10 +58,12 @@ const createPost = asyncHandler(async (req, res) => {
 
 const getAllPosts = asyncHandler(async (req, res) => {
   const posts = await Post.find({});
-
+  if (!posts) {
+    throw new ApiError(400, "Error while fetching the posts");
+  }
   res
     .status(200)
-    .json(new ApiResponse(200, posts, "All posts fethced successfully"));
+    .json(new ApiResponse(200, posts, "All posts fetched successfully"));
 });
 
 const getPostById = asyncHandler(async (req, res) => {
