@@ -53,6 +53,14 @@ const createPost = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, createdPost, "Post uploaded Successfully"));
 });
 
+const getAllPosts = asyncHandler(async (req, res) => {
+  const posts = await Post.find({});
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, posts, "All posts fethced successfully"));
+});
+
 const getPostById = asyncHandler(async (req, res) => {
   const post_id = req.params.id;
   if (!post_id) {
@@ -66,4 +74,4 @@ const getPostById = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(201, post, "Post fetched successfully"));
 });
 
-export { createPost, getPostById };
+export { createPost, getPostById, getAllPosts };
