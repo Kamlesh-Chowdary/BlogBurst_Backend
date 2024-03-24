@@ -5,6 +5,7 @@ import {
   getAllPosts,
   getPostById,
   updatePost,
+  updatefeaturedImage,
 } from "../controllers/post.controller.js";
 import { verifyUser } from "../middlewares/auth.middleware.js";
 const postRouter = Router();
@@ -19,4 +20,8 @@ postRouter
 postRouter.route("/get-posts").get(getAllPosts);
 postRouter.route("/:id").get(getPostById);
 postRouter.route("/update-post/:slug_id").patch(updatePost);
+postRouter
+  .route("/update-image/:slug_id")
+  .patch(upload.single("featuredImage"), updatefeaturedImage);
+
 export { postRouter };

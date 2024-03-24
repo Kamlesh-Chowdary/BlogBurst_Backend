@@ -101,7 +101,37 @@ const updatePost = asyncHandler(async (req, res) => {
 
   res
     .status(200)
-    .json(new ApiResponse(200, updatePost, "Post Updated Successfully"));
+    .json(new ApiResponse(200, updatedPost, "Post Updated Successfully"));
 });
 
-export { createPost, getPostById, getAllPosts, updatePost };
+const updatefeaturedImage = asyncHandler(async (req, res) => {
+  const featuredImageLocalPath = req.file?.path;
+  const { slug_id } = req.params;
+  if (!featuredImageLocalPath) {
+    throw new ApiError(400, "featuredImage file is missing");
+  }
+
+  const featuredImage = await uploadOnCloudinary(featuredImageLocalPath);
+  if (!featuredImage) {
+    throw new ApiError(400, "Error uploading the new image");
+  }
+
+  const updatedPost = await Post.findOneAndUpdate(
+    { slug: slug_id },
+    {
+      featuredImage: featuredImage.secure_url,
+    },
+    { new: true }
+  );
+  res
+    .status(200)
+    .json(new ApiResponse(200, updatedPost, "Image updated successfully"));
+});
+
+export {
+  createPost,
+  getPostById,
+  getAllPosts,
+  updatePost,
+  updatefeaturedImage,
+};
