@@ -107,6 +107,22 @@ const updatePost = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, updatedPost, "Post Updated Successfully"));
 });
 
+const deletePost = asyncHandler(async (req, res) => {
+  const { slug_id } = req.params;
+  if (!slug_id) {
+    throw new ApiError(400, "Slug value is required");
+  }
+
+  const deletedPost = await Post.findOneAndDelete({ slug: slug_id });
+  if (!deletedPost) {
+    throw new ApiError(400, "Error while deleting the post");
+  }
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, deletedPost, "Post deleted successfully"));
+});
+
 const updatefeaturedImage = asyncHandler(async (req, res) => {
   const featuredImageLocalPath = req.file?.path;
   const { slug_id } = req.params;
@@ -152,6 +168,7 @@ export {
   getPostById,
   getAllPosts,
   updatePost,
+  deletePost,
   updatefeaturedImage,
   deleteFeaturedImage,
 };

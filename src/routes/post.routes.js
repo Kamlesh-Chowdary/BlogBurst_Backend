@@ -3,6 +3,7 @@ import { Router } from "express";
 import {
   createPost,
   deleteFeaturedImage,
+  deletePost,
   getAllPosts,
   getPostById,
   updatePost,
@@ -25,4 +26,6 @@ postRouter
   .route("/update-image/:slug_id")
   .patch(upload.single("featuredImage"), updatefeaturedImage);
 postRouter.route("/delete-image").delete(deleteFeaturedImage);
+postRouter.route("/delete-post/:slug_id").delete(deletePost);
+
 export { postRouter };
