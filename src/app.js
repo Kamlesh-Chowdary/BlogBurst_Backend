@@ -1,7 +1,7 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-
+import morgan from "morgan";
 const app = express();
 
 app.use(
@@ -9,6 +9,10 @@ app.use(
     origin: process.env.CORS_ORIGIN,
     credentials: true,
   })
+);
+morgan.token("body", (request) => JSON.stringify(request.body));
+app.use(
+  morgan(":method :url  :status :res[content-length] - :response-time ms :body")
 );
 
 app.use(express.json({ limit: "16kb" }));
