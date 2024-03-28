@@ -67,14 +67,14 @@ const getAllPosts = asyncHandler(async (req, res) => {
 });
 
 const getPostById = asyncHandler(async (req, res) => {
-  const post_id = req.params.id;
-  if (!post_id) {
-    throw new ApiError(400, "Post Id is required");
+  const slug = req.params.slug;
+  if (!slug) {
+    throw new ApiError(400, "Post slug is required");
   }
 
-  const post = await Post.findById(post_id).populate("owner", "fullname");
+  const post = await Post.findOne({ slug }).populate("owner", "fullname");
   if (!post) {
-    throw new ApiError(401, "Invalid Post Id");
+    throw new ApiError(401, "Invalid Post slug");
   }
   res.status(200).json(new ApiResponse(201, post, "Post fetched successfully"));
 });
@@ -150,7 +150,8 @@ const updatefeaturedImage = asyncHandler(async (req, res) => {
 });
 
 const deleteFeaturedImage = asyncHandler(async (req, res) => {
-  const imageUrl = req.body?.featuredImage;
+  console.log("Hello");
+  const imageUrl = req.params?.image_url;
   if (!imageUrl) {
     throw new ApiError(400, "Image URL is required");
   }

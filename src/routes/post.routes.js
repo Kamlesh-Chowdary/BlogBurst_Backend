@@ -20,12 +20,12 @@ postRouter
   .post(upload.single("featuredImage"), createPost);
 
 postRouter.route("/get-posts").get(getAllPosts);
-postRouter.route("/:id").get(getPostById);
+postRouter.route("/:slug").get(getPostById);
 postRouter.route("/update-post/:slug_id").patch(updatePost);
 postRouter
   .route("/update-image/:slug_id")
   .patch(upload.single("featuredImage"), updatefeaturedImage);
-postRouter.route("/delete-image").delete(deleteFeaturedImage);
+postRouter.route("/delete-image/:image_url").delete(deleteFeaturedImage);
 postRouter.route("/delete-post/:slug_id").delete(deletePost);
 
 export { postRouter };
