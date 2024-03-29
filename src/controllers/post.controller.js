@@ -74,7 +74,7 @@ const getPostById = asyncHandler(async (req, res) => {
 
   const post = await Post.findOne({ slug }).populate("owner", "fullname");
   if (!post) {
-    throw new ApiError(401, "Invalid Post slug");
+    throw new ApiError(404, "Invalid Post slug");
   }
   res.status(200).json(new ApiResponse(201, post, "Post fetched successfully"));
 });
@@ -85,17 +85,18 @@ const updatePost = asyncHandler(async (req, res) => {
   if (!slug_id) {
     throw new ApiError(404, "Slug value is missing");
   }
-  const { title, slug, content, status } = req.body;
+  const { title, slug, content, featuredImage, status } = req.body;
+  console.log(title, slug, content);
 
   if ([title, slug, status, content].some((field) => field?.trim() === "")) {
     throw new ApiError(400, "All fields are required");
   }
-
   const updatedPost = await Post.findOneAndUpdate(
     { slug: slug_id },
     {
       title,
       slug,
+      featuredImage,
       content,
       status,
     },
@@ -127,37 +128,33 @@ const deletePost = asyncHandler(async (req, res) => {
 
 const updatefeaturedImage = asyncHandler(async (req, res) => {
   const featuredImageLocalPath = req.file?.path;
-  const { slug_id } = req.params;
   if (!featuredImageLocalPath) {
     throw new ApiError(400, "featuredImage file is missing");
   }
-
   const featuredImage = await uploadOnCloudinary(featuredImageLocalPath);
   if (!featuredImage) {
     throw new ApiError(400, "Error uploading the new image");
   }
 
-  const updatedPost = await Post.findOneAndUpdate(
-    { slug: slug_id },
-    {
-      featuredImage: featuredImage.secure_url,
-    },
-    { new: true }
-  );
   res
     .status(200)
-    .json(new ApiResponse(200, updatedPost, "Image updated successfully"));
+    .json(
+      new ApiResponse(
+        200,
+        featuredImage.secure_url,
+        "Image updated successfully"
+      )
+    );
 });
 
 const deleteFeaturedImage = asyncHandler(async (req, res) => {
-  console.log("Hello");
-  const imageUrl = req.params?.image_url;
-  if (!imageUrl) {
+  const post_id = req.params?.post_id;
+  if (!post_id) {
     throw new ApiError(400, "Image URL is required");
   }
-  console.log(imageUrl);
 
-  const response = await deleteFileOnCloudinary(imageUrl);
+  const post = await Post.findOne({ _id: post_id });
+  const response = await deleteFileOnCloudinary(post.featuredImage);
   if (!response) {
     throw new ApiError(400, "Error deleting the file");
   }

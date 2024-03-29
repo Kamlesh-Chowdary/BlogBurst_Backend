@@ -10,10 +10,10 @@ app.use(
     credentials: true,
   })
 );
-morgan.token("body", (request) => JSON.stringify(request.body));
-app.use(
-  morgan(":method :url  :status :res[content-length] - :response-time ms :body")
-);
+// morgan.token("body", (request) => JSON.stringify(request.body));
+// app.use(
+//   morgan(":method :url  :status :res[content-length] - :response-time ms :body")
+// );
 
 app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
