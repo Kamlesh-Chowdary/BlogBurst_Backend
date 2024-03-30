@@ -86,7 +86,6 @@ const updatePost = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Slug value is missing");
   }
   const { title, slug, content, featuredImage, status } = req.body;
-  console.log(title, slug, content);
 
   if ([title, slug, status, content].some((field) => field?.trim() === "")) {
     throw new ApiError(400, "All fields are required");
@@ -153,7 +152,7 @@ const deleteFeaturedImage = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Image URL is required");
   }
 
-  const post = await Post.findOne({ _id: post_id });
+  const post = await Post.findById(post_id);
   const response = await deleteFileOnCloudinary(post.featuredImage);
   if (!response) {
     throw new ApiError(400, "Error deleting the file");
