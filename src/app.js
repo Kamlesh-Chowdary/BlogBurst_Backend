@@ -1,8 +1,6 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import path from "path";
-import morgan from "morgan";
 const app = express();
 
 app.use(
@@ -11,10 +9,6 @@ app.use(
     credentials: true,
   })
 );
-// morgan.token("body", (request) => JSON.stringify(request.body));
-// app.use(
-//   morgan(":method :url  :status :res[content-length] - :response-time ms :body")
-// );
 
 app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
@@ -28,8 +22,4 @@ import { postRouter } from "./routes/post.routes.js";
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/posts", postRouter);
 
-// Serve 'index.html' for all other routes
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
 export { app };
