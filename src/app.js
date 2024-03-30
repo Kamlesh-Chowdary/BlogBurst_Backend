@@ -26,7 +26,9 @@ import { userRouter } from "./routes/user.routes.js";
 import { postRouter } from "./routes/post.routes.js";
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/posts", postRouter);
-app.get("/", (req, res) => {
-  res.send("This url is working");
+
+// Serve 'index.html' for all other routes
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 export { app };
